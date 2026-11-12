@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2e6b3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="งานแก้ไข">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>งานแก้ไข</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: #f2f4f2; color: #1d2b1f;
+               font-family: -apple-system, "Sukhumvit Set", "Noto Sans Thai", sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: #2e6b3a; color: #fff;
+           padding: calc(10px + env(safe-area-inset-top)) 16px 10px; display: flex; align-items: center; gap: 10px; }
+  header .ttl { flex: 1; min-width: 0; }
+  header .t { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  header .s { font-size: 12.5px; opacity: .85; }
+  header button { background: rgba(255,255,255,.15); border: 0; color: #fff; font-size: 15px; padding: 8px 12px;
+                  border-radius: 10px; font-family: inherit; }
+  .wrap { padding: 12px 16px calc(80px + env(safe-area-inset-bottom)); max-width: 560px; margin: 0 auto; }
+  .hidden { display: none !important; }
+  h2 { font-size: 16px; margin: 14px 0 8px; color: #2e6b3a; }
+  .empty { text-align: center; color: #5b6b5d; padding: 30px 0; }
+  .card { display: flex; gap: 12px; background: #fff; border-radius: 14px; padding: 10px; margin-bottom: 10px;
+          border-left: 6px solid #9db5a1; }
+  .card.over, .card.ret { border-left-color: #c0392b; }
+  .card.soon { border-left-color: #e0a526; }
+  .card.rev { border-left-color: #7d5ba6; }
+  .card .th { flex: 0 0 84px; height: 84px; border-radius: 10px; background: #e3e9e4; overflow: hidden; }
+  .card .th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .bd { flex: 1; min-width: 0; }
+  .card .top { display: flex; justify-content: space-between; gap: 6px; font-size: 12.5px; color: #5b6b5d; }
+  .card .title { font-size: 16.5px; font-weight: 600; margin: 3px 0 4px; line-height: 1.35; }
+  .badge { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+           background: #e8eee9; margin: 2px 4px 2px 0; }
+  .badge.over, .badge.ret { background: #f6d5d5; color: #a93226; }
+  .badge.soon { background: #fcefd2; color: #9a6408; }
+  .badge.rev { background: #ebe2f5; color: #5e3f86; }
+  .badge.draft { background: #e3eefb; color: #1f5f99; }
+  .d-photo { width: 100%; border-radius: 12px; display: block; margin-top: 10px; background: #e3e9e4; min-height: 160px; }
+  .d-meta { font-size: 14px; color: #5b6b5d; margin: 6px 0; line-height: 1.6; }
+  .d-note { white-space: pre-wrap; font-size: 14px; background: #fff; border-radius: 10px; padding: 10px; }
+  .retbox { background: #fdecea; color: #a93226; border-radius: 10px; padding: 10px 12px; margin-top: 10px; font-size: 15px; }
+  label { display: block; font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+  .box { background: #fff; border-radius: 12px; padding: 4px 14px 14px; margin-top: 14px; }
+  .photo-row { display: flex; gap: 8px; margin-top: 10px; }
+  .photo-btn { flex: 1; display: block; text-align: center; padding: 14px 6px; border: 2px dashed #2e6b3a; border-radius: 12px;
+               color: #2e6b3a; font-size: 15px; font-weight: 600; background: #fff; }
+  input[type=file] { display: none; }
+  input[type=text] { width: 100%; font-size: 17px; padding: 12px; border: 1px solid #c5cfc6; border-radius: 10px;
+                     background: #fff; font-family: inherit; }
+  .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .thumbs .t { position: relative; }
+  .thumbs img, .thumbs .ph { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; background: #e3e9e4; }
+  .thumbs .up { position: absolute; left: 0; right: 0; bottom: 0; font-size: 11px; text-align: center; color: #fff;
+                background: rgba(0,0,0,.45); border-radius: 0 0 8px 8px; padding: 2px; }
+  .thumbs button { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; border-radius: 15px; border: 0;
+                   background: rgba(0,0,0,.6); color: #fff; font-size: 15px; }
+  .btn { width: 100%; margin-top: 16px; padding: 15px; font-size: 17px; font-weight: 600; color: #fff;
+         background: #2e6b3a; border: 0; border-radius: 12px; font-family: inherit; }
+  .btn:disabled { opacity: .5; }
+  .hint { font-size: 13px; color: #5b6b5d; margin-top: 6px; }
+  .msg { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 15px; }
+  .ok { background: #d9ead3; } .err { background: #f6d5d5; }
+  .qbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: #fff8e1; color: #6d5200; font-size: 14px;
+          text-align: center; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #f0d98c; }
+  .qbar.err { background: #fdecea; color: #a93226; border-top-color: #f2b8b5; }
+  .spin { display: inline-block; animation: sp 1s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<header>
+  <div class="ttl"><div class="t" id="hdr">งานที่ต้องแก้ไข</div><div class="s" id="sub">กำลังเปิด...</div></div>
+  <button id="backBtn" class="hidden" type="button">‹ กลับ</button>
+  <button id="refBtn" type="button" aria-label="โหลดใหม่">⟳</button>
+</header>
+
+<main id="pgList" class="wrap">
+  <div id="topMsg"></div>
+  <div id="listMsg"></div>
+  <h2 id="hTodo" class="hidden"></h2>
+  <div id="listTodo"></div>
+  <h2 id="hRev" class="hidden"></h2>
+  <div id="listRev"></div>
+</main>
+
+<main id="pgDetail" class="wrap hidden">
+  <div class="d-meta" id="dTop"></div>
+  <div style="font-size:20px;font-weight:700;margin:2px 0 4px" id="dTitle"></div>
+  <div id="dBadges"></div>
+  <div id="dRet" class="retbox hidden"></div>
+  <img id="dPhoto" class="d-photo hidden" alt="รูปปัญหา">
+  <div id="dDetailWrap"><label>รายละเอียด / สิ่งที่ต้องทำ</label><div class="d-note" id="dDetail"></div></div>
+  <div id="dNoteWrap"><label>ประวัติการติดตาม</label><div class="d-note" id="dNote"></div></div>
+
+  <div id="fixBox" class="box">
+    <label>รูปหลังแก้ <span id="pCount"></span></label>
+    <div class="hint">เลือกรูปแล้วระบบบันทึกเป็น <b>ร่าง</b> ทันที ลบหรือเพิ่มได้ (สูงสุด 3 รูป) จนกว่าจะกดยืนยัน</div>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="photo-row" id="addRow">
+      <label for="fCam" class="photo-btn">📷 ถ่ายรูป</label>
+      <label for="fLib" class="photo-btn">🖼️ เลือกจากคลังรูป</label>
+    </div>
+    <input type="file" id="fCam" accept="image/*" capture="environment">
+    <input type="file" id="fLib" accept="image/*" multiple>
+    <label for="fNote">หมายเหตุ (ไม่บังคับ)</label>
+    <input type="text" id="fNote" placeholder="เช่น เก็บกวาดและจัดวางใหม่แล้ว">
+    <button class="btn" id="fBtn" type="button">✅ ยืนยันส่งให้ผู้ตรวจ</button>
+    <div class="hint">ยืนยันแล้วจะลบหรือเปลี่ยนรูปไม่ได้</div>
+  </div>
+  <div id="revBox" class="box hidden">
+    <label>รูปหลังแก้ที่ส่งแล้ว · รอผู้ตรวจตรวจรับ</label>
+    <div class="thumbs" id="revThumbs"></div>
+  </div>
+  <div id="dMsg"></div>
+</main>
+
+<div id="qbar" class="qbar hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
