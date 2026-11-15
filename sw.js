@@ -2,7 +2,7 @@
    Strategy: show the saved copy at once, fetch a fresh copy in the background
    (the new version appears the next time the app opens). Server data and
    photos are not handled here. Change VERSION when releasing new files. */
-var VERSION = 'unit-v2';
+var VERSION = 'unit-v3';
 var FILES = ['./', './index.html', './app.js', './manifest.webmanifest', './icon-180.png', './icon-192.png'];
 
 self.addEventListener('install', function (e) {
@@ -20,6 +20,7 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;           // API and photos go straight to the network
+  if (url.pathname.indexOf('/owner/') !== -1) return;          // the owner app has its own worker
   var key = req.mode === 'navigate' ? './index.html' : req;   // any ?k=... link opens the same page
   e.respondWith(caches.open(VERSION).then(function (c) {
     return c.match(key, { ignoreSearch: req.mode === 'navigate' }).then(function (hit) {

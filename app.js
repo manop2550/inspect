@@ -31,7 +31,7 @@
   var current = null;       // item open in detail
   var localSrc = {};        // fileId or tmp id -> data URL shown while Drive makes its thumbnail
   var queue = [];           // pending server writes (mirrors IndexedDB)
-  var busy = false, lastErr = '', retryTimer = null, loading = false;
+  var busy = false, lastErr = '', retryTimer = null, loading = false, again = false;
 
   /* ---------- API ---------- */
   function api(body, timeoutMs) {
@@ -166,15 +166,18 @@
   }
   function saveList() { if (data) lsSet(LIST_KEY, JSON.stringify(data)); }
   function refresh(quiet) {
-    if (!KEY || loading) return;
-    loading = true;
+    if (!KEY) return;
+    if (loading) { again = true; return; }   // a write finished meanwhile: load once more after this one
+    loading = true; again = false;
     if (!quiet) $('refBtn').innerHTML = '<span class="spin">⟳</span>';
     api({ a: 'site.list', k: KEY }).then(function (d) {
       loading = false; $('refBtn').textContent = '⟳';
+      if (again) return refresh(true);
       data = d; saveList(); render();
       if (current) { var it = findItem(current.id); if (it) { current = it; renderDetail(); } else showList(); }
     }, function (e) {
       loading = false; $('refBtn').textContent = '⟳';
+      if (again) return refresh(true);
       if (e && e.server) { $('topMsg').innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; if (!data) $('sub').textContent = ''; }
       else if (!data) $('topMsg').innerHTML = '<div class="msg err">เชื่อมต่อไม่ได้ ลองกด ⟳ อีกครั้ง</div>';
       subLine();

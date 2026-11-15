@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#234e70">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ตรวจงาน">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>สมุดตรวจงาน</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: #f1f3f6; color: #1c2733;
+               font-family: -apple-system, "Sukhumvit Set", "Noto Sans Thai", sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: #234e70; color: #fff;
+           padding: calc(10px + env(safe-area-inset-top)) 16px 10px; display: flex; align-items: center; gap: 10px; }
+  header .ttl { flex: 1; min-width: 0; }
+  header .t { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  header .s { font-size: 12.5px; opacity: .85; }
+  header button { background: rgba(255,255,255,.15); border: 0; color: #fff; font-size: 15px; padding: 8px 12px;
+                  border-radius: 10px; font-family: inherit; }
+  .wrap { padding: 12px 16px calc(80px + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto; }
+  .hidden { display: none !important; }
+  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .chip { background: #fff; border: 2px solid transparent; border-radius: 12px; padding: 8px 4px; text-align: center;
+          font-family: inherit; color: inherit; }
+  .chip b { display: block; font-size: 22px; line-height: 1.2; }
+  .chip span { font-size: 12px; color: #5a6878; white-space: nowrap; }
+  .chip.on { border-color: #234e70; background: #e6eef6; }
+  .chip.rev b { color: #6b4a9a; } .chip.over b { color: #b03a2e; } .chip.soon b { color: #a86a05; }
+  select { width: 100%; margin: 10px 0 4px; font-size: 16px; padding: 10px; border-radius: 10px; border: 1px solid #c9d2dc;
+           background: #fff; font-family: inherit; color: inherit; }
+  .empty { text-align: center; color: #5a6878; padding: 30px 0; }
+  .card { display: flex; gap: 12px; background: #fff; border-radius: 14px; padding: 10px; margin-top: 10px;
+          border-left: 6px solid #a9b8c7; }
+  .card.over, .card.ret { border-left-color: #c0392b; }
+  .card.soon { border-left-color: #e0a526; }
+  .card.rev { border-left-color: #7d5ba6; }
+  .card .th { flex: 0 0 84px; height: 84px; border-radius: 10px; background: #e2e8ee; overflow: hidden; }
+  .card .th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .bd { flex: 1; min-width: 0; }
+  .card .top { display: flex; justify-content: space-between; gap: 6px; font-size: 12.5px; color: #5a6878; }
+  .card .top .site { font-weight: 600; color: #234e70; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .card .title { font-size: 16.5px; font-weight: 600; margin: 3px 0 4px; line-height: 1.35; }
+  .badge { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+           background: #e7ecf1; margin: 2px 4px 2px 0; }
+  .badge.over, .badge.ret { background: #f6d5d5; color: #a93226; }
+  .badge.soon { background: #fcefd2; color: #9a6408; }
+  .badge.rev { background: #ebe2f5; color: #5e3f86; }
+  .badge.prog { background: #dcecf9; color: #1d5b8f; }
+  .badge.wait { background: #fff3cd; color: #7a5b00; }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .nav button { flex: 0 0 auto; background: #fff; border: 1px solid #c9d2dc; border-radius: 10px; padding: 9px 14px;
+                font-size: 15px; font-family: inherit; color: #234e70; }
+  .nav button:disabled { opacity: .35; }
+  .nav span { font-size: 14px; color: #5a6878; }
+  .d-meta { font-size: 14px; color: #5a6878; margin: 4px 0; line-height: 1.6; }
+  .d-title { font-size: 20px; font-weight: 700; margin: 2px 0 4px; }
+  .d-photo { width: 100%; border-radius: 12px; display: block; margin-top: 10px; background: #e2e8ee; min-height: 180px; object-fit: cover; }
+  .d-note { white-space: pre-wrap; font-size: 14px; background: #fff; border-radius: 10px; padding: 10px; line-height: 1.55; }
+  label { display: block; font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+  .box { background: #fff; border-radius: 12px; padding: 4px 14px 14px; margin-top: 14px; }
+  .box.rev { border: 2px solid #b9a3d9; }
+  .box h3 { font-size: 15.5px; margin: 12px 0 4px; }
+  .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .thumbs img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; background: #e2e8ee; }
+  input[type=text], input[type=date] { width: 100%; font-size: 17px; padding: 11px; border: 1px solid #c9d2dc; border-radius: 10px;
+                     background: #fff; font-family: inherit; color: inherit; }
+  input[type=file] { display: none; }
+  .row2 { display: flex; gap: 8px; }
+  .row2 > * { flex: 1; }
+  .seg { display: flex; gap: 8px; }
+  .seg button { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid #c9d2dc; background: #fff; font-size: 15px;
+                font-family: inherit; color: inherit; }
+  .seg button.on { background: #234e70; border-color: #234e70; color: #fff; }
+  .btn { width: 100%; margin-top: 12px; padding: 14px; font-size: 16.5px; font-weight: 600; color: #fff;
+         background: #234e70; border: 0; border-radius: 12px; font-family: inherit; }
+  .btn.ok { background: #2e7d4f; } .btn.bad { background: #b03a2e; } .btn.grey { background: #5a6878; }
+  .photo-btn { display: block; text-align: center; padding: 12px 6px; border: 2px dashed #234e70; border-radius: 12px;
+               color: #234e70; font-size: 15px; font-weight: 600; background: #fff; }
+  .prev img { width: 100%; max-height: 240px; object-fit: cover; border-radius: 10px; margin-top: 8px; display: block; }
+  .msg { margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 15px; }
+  .ok-m { background: #d9ead3; } .err-m { background: #f6d5d5; }
+  .qbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: #fff8e1; color: #6d5200; font-size: 14px;
+          text-align: center; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #f0d98c; }
+  .qbar.err { background: #fdecea; color: #a93226; border-top-color: #f2b8b5; }
+  .viewer { position: fixed; inset: 0; z-index: 20; background: #000; display: flex; align-items: center; justify-content: center; }
+  .viewer img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .viewer .x { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 14px; color: #fff; font-size: 15px;
+               background: rgba(255,255,255,.18); border-radius: 18px; padding: 8px 14px; }
+  .spin { display: inline-block; animation: sp 1s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<header>
+  <div class="ttl"><div class="t" id="hdr">สมุดตรวจงาน</div><div class="s" id="sub">กำลังเปิด...</div></div>
+  <button id="backBtn" class="hidden" type="button">‹ กลับ</button>
+  <button id="refBtn" type="button" aria-label="โหลดใหม่">⟳</button>
+</header>
+
+<main id="pgList" class="wrap">
+  <div id="topMsg"></div>
+  <div class="chips" id="chips">
+    <button class="chip on" data-f="all" type="button"><b id="cAll">-</b><span>ค้างทั้งหมด</span></button>
+    <button class="chip rev" data-f="rev" type="button"><b id="cRev">-</b><span>รอตรวจรับ</span></button>
+    <button class="chip over" data-f="over" type="button"><b id="cOver">-</b><span>เกินกำหนด</span></button>
+    <button class="chip soon" data-f="soon" type="button"><b id="cSoon">-</b><span>ใกล้ครบ</span></button>
+  </div>
+  <select id="fSite"><option value="">ทุกหน่วยงาน</option></select>
+  <div id="listMsg"></div>
+  <div id="list"></div>
+</main>
+
+<main id="pgDetail" class="wrap hidden">
+  <div class="nav"><button id="dPrev" type="button">‹ ก่อนหน้า</button><span id="dPos"></span><button id="dNext" type="button">ถัดไป ›</button></div>
+  <div class="d-meta" id="dTop"></div>
+  <div class="d-title" id="dTitle"></div>
+  <div id="dBadges"></div>
+  <img id="dPhoto" class="d-photo" alt="รูปปัญหา">
+  <div id="dDetailWrap"><label>รายละเอียด / สิ่งที่ต้องทำ</label><div class="d-note" id="dDetail"></div></div>
+
+  <div id="revBox" class="box rev hidden">
+    <h3>📥 หน่วยงานแจ้งว่าแก้เสร็จแล้ว</h3>
+    <div class="thumbs" id="revThumbs"></div>
+    <button class="btn ok" id="rOk" type="button">✅ ตรวจรับ ปิดงาน</button>
+    <label for="rReason">หรือส่งกลับให้แก้ใหม่ (ใส่เหตุผล)</label>
+    <input type="text" id="rReason" placeholder="เช่น ยังเก็บไม่หมด ด้านหลังยังรก">
+    <button class="btn bad" id="rBack" type="button">↩️ ส่งกลับให้แก้ใหม่</button>
+  </div>
+  <div id="draftBox" class="box hidden">
+    <h3 id="draftLbl"></h3>
+    <div class="thumbs" id="draftThumbs"></div>
+  </div>
+
+  <div id="dNoteWrap"><label>ประวัติการติดตาม</label><div class="d-note" id="dNote"></div></div>
+
+  <div id="manBox" class="box">
+    <h3>✏️ ติดตามงาน</h3>
+    <div id="segWrap"><label>สถานะ</label>
+      <div class="seg"><button type="button" data-s="Open">⏳ รอแก้</button><button type="button" data-s="In progress">🔧 กำลังแก้</button></div>
+    </div>
+    <label for="mDue">กำหนดเสร็จ</label>
+    <input type="date" id="mDue">
+    <label for="mNote">บันทึกเพิ่ม</label>
+    <input type="text" id="mNote" placeholder="เช่น โทรตามแล้ว รอของเข้า">
+    <button class="btn" id="mSave" type="button">💾 บันทึก</button>
+  </div>
+
+  <div id="closeBox" class="box">
+    <h3>🔒 ปิดงานเอง</h3>
+    <div class="row2">
+      <label for="cCam" class="photo-btn">📷 ถ่ายรูป</label>
+      <label for="cLib" class="photo-btn">🖼️ คลังรูป</label>
+    </div>
+    <input type="file" id="cCam" accept="image/*" capture="environment">
+    <input type="file" id="cLib" accept="image/*">
+    <div class="prev hidden" id="cPrev"><img id="cImg" alt=""><button class="btn grey" id="cDrop" type="button">ไม่ใช้รูปนี้</button></div>
+    <label for="cNote">หมายเหตุ (ไม่บังคับ)</label>
+    <input type="text" id="cNote" placeholder="เช่น ตรวจแล้วเรียบร้อย">
+    <button class="btn ok" id="cBtn" type="button">🔒 ปิดงาน</button>
+  </div>
+  <div id="dMsg"></div>
+</main>
+
+<div id="viewer" class="viewer hidden"><img id="vImg" alt=""><span class="x">✕ ปิด</span></div>
+<div id="qbar" class="qbar hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
