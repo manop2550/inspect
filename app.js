@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var API = 'https://script.google.com/macros/s/AKfycbzihl-yRLksiij7rRmstAH9iVYgBRh003bgQBQnDJq8iA_2WCYHcL5uX-6DFCSlzgEO4g/exec';
+  var API = 'https://script.google.com/macros/s/AKfycby-OI8fk6svAZTD5AZk4X-HM2ZLuqS8qP5tI5aZTuA4zFPXY9v9HxbQFMC9x5regFdN/exec';
   var MAX_PHOTOS = 3, MAX_SIDE = 1600;
 
   /* ---------- small helpers ---------- */
