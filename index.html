@@ -44,6 +44,8 @@
   .badge.rev { background: #ebe2f5; color: #5e3f86; }
   .badge.draft { background: #e3eefb; color: #1f5f99; }
   .d-photo { width: 100%; border-radius: 12px; display: block; margin-top: 10px; background: #e3e9e4; min-height: 160px; }
+  .more { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .more img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; background: #e3e9e4; }
   .d-meta { font-size: 14px; color: #5b6b5d; margin: 6px 0; line-height: 1.6; }
   .d-note { white-space: pre-wrap; font-size: 14px; background: #fff; border-radius: 10px; padding: 10px; }
   .retbox { background: #fdecea; color: #a93226; border-radius: 10px; padding: 10px 12px; margin-top: 10px; font-size: 15px; }
@@ -97,6 +99,7 @@
   <div id="dBadges"></div>
   <div id="dRet" class="retbox hidden"></div>
   <img id="dPhoto" class="d-photo hidden" alt="รูปปัญหา">
+  <div class="more" id="dMore"></div>
   <div id="dDetailWrap"><label>รายละเอียด / สิ่งที่ต้องทำ</label><div class="d-note" id="dDetail"></div></div>
   <div id="dNoteWrap"><label>ประวัติการติดตาม</label><div class="d-note" id="dNote"></div></div>
 

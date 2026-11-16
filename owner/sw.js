@@ -1,6 +1,6 @@
 /* Owner app service worker: keeps the app files on the phone so it opens instantly.
    Saved copy first, fresh copy fetched in the background. Change VERSION on each release. */
-var VERSION = 'owner-v1';
+var VERSION = 'owner-v2';
 var FILES = ['./', './index.html', './app.js', './manifest.webmanifest', './icon-180.png', './icon-192.png'];
 
 self.addEventListener('install', function (e) {

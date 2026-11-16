@@ -2,7 +2,7 @@
    Strategy: show the saved copy at once, fetch a fresh copy in the background
    (the new version appears the next time the app opens). Server data and
    photos are not handled here. Change VERSION when releasing new files. */
-var VERSION = 'unit-v3';
+var VERSION = 'unit-v4';
 var FILES = ['./', './index.html', './app.js', './manifest.webmanifest', './icon-180.png', './icon-192.png'];
 
 self.addEventListener('install', function (e) {

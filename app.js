@@ -254,16 +254,30 @@
     $('backBtn').classList.remove('hidden'); $('refBtn').classList.add('hidden');
     $('dMsg').innerHTML = ''; $('fNote').value = '';
     var img = $('dPhoto');
-    img.classList.add('hidden');
+    img.classList.add('hidden'); delete img.dataset.main;
     if (current.photoId) {
       img.onload = function () { img.classList.remove('hidden'); };
       img.src = thumb(current.photoId, 1000);
       img.dataset.full = thumb(current.photoId, 2000);
     }
+    // extra angles of the same problem (owner can attach up to 3 photos)
+    $('dMore').innerHTML = (current.more || []).map(function (f) {
+      return '<img alt="" loading="lazy" data-full="' + esc(thumb(f, 2000)) + '" src="' + esc(thumb(f, 500)) + '">';
+    }).join('');
     renderDetail();
     window.scrollTo(0, 0);
   }
   $('dPhoto').addEventListener('click', function () { if (this.dataset.full) this.src = this.dataset.full; });
+  // tap an extra angle: show it big in place of the main photo, tap again to go back
+  $('dMore').addEventListener('click', function (ev) {
+    var im = ev.target.closest('img[data-full]');
+    if (!im) return;
+    var main = $('dPhoto');
+    if (!main.dataset.main) main.dataset.main = main.src;
+    main.src = main.src === im.dataset.full ? main.dataset.main : im.dataset.full;
+    main.classList.remove('hidden');
+    main.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
 
   function renderDetail() {
     var it = current, v = view(it);
